@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>ClearSpend</title>
+<meta name="theme-color" content="#000000" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="ClearSpend" />
+<style>
+/* ============================================================
+   CLEARSPEND — ALL STYLES
+   To change the color scheme, edit the variables inside :root {}
+   --orange  = the main accent color (buttons, highlights, titles)
+   --green   = positive / under-budget color
+   --red     = negative / over-budget color
+   --bg      = main background (pure black)
+   ============================================================ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #000000;
+  --bg2: #0d0d0d;
+  --bg3: #161616;
+  --bg4: #1f1f1f;
+  --border: #2a2a2a;
+  --border2: #3a3a3a;
+  --text: #ffffff;
+  --text2: #a0a0a0;
+  --text3: #666666;
+  --orange: #ffd23f;
+  --orange-dim: #3a3410;
+  --green: #00d084;
+  --red: #ff4d4d;
+  --amber: #ef9f27;
+  --blue: #4a9eff;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+html, body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* TOP NAV */
+.topbar { background: var(--bg2); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+.topbar-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; flex-wrap: wrap; gap: 12px; }
+.logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--orange); letter-spacing: -0.4px; }
+.logo-dot { width: 10px; height: 10px; background: var(--orange); border-radius: 50%; }
+.nav { display: flex; gap: 6px; flex-wrap: wrap; }
+.nav-btn { background: transparent; border: 1px solid transparent; color: var(--text2); font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.nav-btn:hover { color: var(--text); background: var(--bg4); }
+.nav-btn.active { color: var(--orange); background: var(--orange-dim); border-color: var(--orange); }
+
+/* LAYOUT */
+.page { max-width: 1200px; margin: 0 auto; padding: 28px 24px 80px; }
+.screen { display: none; }
+.screen.active { display: block; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.page-header { margin-bottom: 24px; }
+.page-header h1 { font-size: 28px; font-weight: 700; }
+.page-header .sub { font-size: 14px; color: var(--text2); margin-top: 4px; }
+.cols-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .cols-2 { grid-template-columns: 1fr; } .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* CARDS */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.card-title { font-size: 14px; font-weight: 700; color: var(--orange); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.6px; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; }
+.stat-label { font-size: 13px; color: var(--text2); margin-bottom: 6px; }
+.stat-val { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.stat-val.green { color: var(--green); }
+.stat-val.red { color: var(--red); }
+.stat-val.orange { color: var(--orange); }
+.stat-sub { font-size: 12px; color: var(--text3); margin-top: 4px; }
+
+/* FORMS */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.form-group { margin-bottom: 14px; }
+label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 6px; font-weight: 500; }
+input, select { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-family: inherit; font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.15s; }
+input:focus, select:focus { border-color: var(--orange); }
+input[type="date"] { color-scheme: dark; }
+select { cursor: pointer; }
+
+/* Radio options for pay schedule */
+.radio-group { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
+.radio-option { display: flex; align-items: center; gap: 8px; cursor: pointer; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 13px; flex: 1; min-width: 160px; transition: all 0.15s; }
+.radio-option:hover { border-color: var(--orange); }
+.radio-option input[type="radio"] { width: auto; margin: 0; accent-color: var(--orange); }
+.radio-option.selected { border-color: var(--orange); background: var(--orange-dim); color: var(--orange); }
+.pay-pattern-box, .pay-manual-box { display: none; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-top: 10px; }
+.pay-pattern-box.show, .pay-manual-box.show { display: block; }
+.date-tag-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.date-tag { background: var(--orange-dim); color: var(--orange); border: 1px solid var(--orange); border-radius: 6px; padding: 5px 10px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+.date-tag button { background: none; border: none; color: var(--orange); cursor: pointer; font-size: 14px; line-height: 1; padding: 0; }
+
+/* BUTTONS */
+.btn { border: none; border-radius: var(--radius-sm); padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.btn-primary { background: var(--orange); color: #000; }
+.btn-primary:hover { background: #ffdd66; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-ghost { background: var(--bg3); color: var(--text); border: 1px solid var(--border2); }
+.btn-ghost:hover { background: var(--bg4); }
+.btn-sm { padding: 7px 14px; font-size: 13px; }
+.btn-danger { background: none; border: none; color: var(--text3); cursor: pointer; padding: 4px 8px; border-radius: 6px; font-size: 18px; line-height: 1; }
+.btn-danger:hover { color: var(--red); }
+
+/* LIST ROWS */
+.list-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.list-row:last-child { border-bottom: none; }
+.list-row-main { font-size: 14px; font-weight: 600; }
+.list-row-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* PROGRESS BARS */
+.prog-bar { height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; margin: 8px 0 6px; }
+.prog-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+.prog-fill.green { background: var(--green); }
+.prog-fill.orange { background: var(--orange); }
+.prog-fill.blue { background: var(--blue); }
+.prog-fill.gray { background: #444; }
+.prog-fill.amber { background: var(--amber); }
+.prog-fill.red { background: var(--red); }
+.breakdown-item { margin-bottom: 14px; }
+.breakdown-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 2px; }
+
+/* TAGS & BADGES */
+.net-tag { font-size: 11px; padding: 3px 9px; border-radius: 5px; font-weight: 700; letter-spacing: 0.3px; }
+.net-visa { background: #1a2c6b; color: #8ab0ff; }
+.net-mastercard { background: #4a1a00; color: #ff9f6b; }
+.net-amex { background: #003a2a; color: #6bffcc; }
+.net-debit { background: #2a2a2a; color: #999; }
+.net-discover { background: #002a18; color: #6bffcc; }
+.net-other { background: #2a2a2a; color: #999; }
+.badge { font-size: 12px; padding: 4px 10px; border-radius: 12px; background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+.badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.empty-state { text-align: center; padding: 30px; color: var(--text3); font-size: 14px; }
+
+/* CALENDAR */
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.cal-month-title { font-size: 18px; font-weight: 700; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-head { font-size: 12px; color: var(--text3); text-align: center; padding: 6px 0; font-weight: 600; }
+.cal-day { aspect-ratio: 1; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; cursor: pointer; border: 1px solid transparent; transition: opacity 0.1s; min-height: 60px; }
+.cal-day:hover:not(.empty-day) { opacity: 0.8; }
+.cal-day.green { background: #0a2e1c; border-color: #1a5c3a; color: var(--green); }
+.cal-day.red { background: #2e0a0a; border-color: #5c1a1a; color: var(--red); }
+.cal-day.none { background: var(--bg3); color: var(--text3); }
+.cal-day.today { box-shadow: 0 0 0 2px var(--orange); }
+.cal-day.empty-day { background: transparent; }
+.cal-day.payday { box-shadow: 0 0 0 2px var(--green); }
+.cal-day .day-amt { font-size: 11px; margin-top: 2px; opacity: 0.85; font-weight: 500; }
+.cal-day .pay-flag { font-size: 9px; color: var(--green); margin-top: 1px; }
+.cal-legend { display: flex; gap: 20px; font-size: 13px; color: var(--text2); margin-bottom: 16px; flex-wrap: wrap; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+.legend-dot.green { background: #1a5c3a; }
+.legend-dot.red { background: #5c1a1a; }
+.legend-dot.gray { background: var(--bg3); border: 1px solid var(--border); }
+.legend-dot.payday { background: transparent; border: 2px solid var(--green); }
+
+/* GOALS */
+.goal-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 14px; }
+.goal-name { font-size: 16px; font-weight: 700; }
+
+/* CALCULATOR */
+.result-box { background: #1a1700; border: 1px solid var(--orange-dim); border-radius: var(--radius); padding: 20px; margin-top: 16px; }
+.result-box-title { font-size: 13px; font-weight: 700; color: var(--orange); text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 16px; }
+.result-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.result-item .r-label { font-size: 12px; color: var(--text3); margin-bottom: 4px; }
+.result-item .r-val { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+.result-item .r-val.danger { color: var(--red); }
+.result-item .r-val.good { color: var(--green); }
+.result-advice { font-size: 13px; color: var(--text2); margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); line-height: 1.6; }
+
+/* YEAR REVIEW */
+.yr-month-block { margin-bottom: 16px; }
+.yr-month-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+.yr-dots { display: flex; gap: 4px; flex-wrap: wrap; }
+.yr-dot { width: 15px; height: 15px; border-radius: 3px; cursor: pointer; }
+.yr-dot.green { background: #1a5c3a; }
+.yr-dot.red { background: #5c1a1a; }
+.yr-dot.none { background: var(--bg3); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+
+/* ============================================================
+   INFO TOOLTIPS — the small ⓘ button next to section titles
+   Click to toggle a one-or-two sentence explanation of what
+   that section does. Works on every screen.
+   ============================================================ */
+.info-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg3); border: 1px solid var(--border2);
+  color: var(--text3); font-size: 11px; font-weight: 700;
+  cursor: pointer; margin-left: 8px; vertical-align: middle;
+  flex-shrink: 0; transition: all 0.15s; font-style: normal;
+  line-height: 1; user-select: none;
+}
+.info-btn:hover, .info-btn.active {
+  background: var(--orange-dim); border-color: var(--orange); color: var(--orange);
+}
+.info-box {
+  display: none;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-left: 3px solid var(--orange); border-radius: var(--radius-sm);
+  padding: 10px 14px; font-size: 13px; color: var(--text2);
+  line-height: 1.6; margin-top: 10px; margin-bottom: 4px;
+}
+.info-box.show { display: block; }
+.title-row { display: flex; align-items: center; margin-bottom: 24px; }
+.title-row h1 { font-size: 28px; font-weight: 700; }
+.stat-label-row { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+.stat-label-row .stat-label { margin-bottom: 0; }
+.card-title-row { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+.card-title-row .card-title { margin-bottom: 0; }
+
+/* Compact one-line color key */
+.color-key-bar {
+  display: flex; flex-wrap: wrap; gap: 18px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 18px; margin-bottom: 20px;
+}
+.ck-item { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--text2); }
+.ck-dot { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo"><div class="logo-dot"></div>ClearSpend</div>
+    <nav class="nav">
+      <button class="nav-btn active" data-section="home">Home</button>
+      <button class="nav-btn" data-section="purchase">Purchase</button>
+      <button class="nav-btn" data-section="cards">Cards</button>
+      <button class="nav-btn" data-section="budget">Budget</button>
+      <button class="nav-btn" data-section="calendar">Calendar</button>
+      <button class="nav-btn" data-section="goals">Goals</button>
+      <button class="nav-btn" data-section="calculator">Calculator</button>
+      <button class="nav-btn" data-section="review">Year Review</button>
+    </nav>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- HOME -->
+  <div id="s-home" class="screen active">
+    <div class="page-header">
+      <div class="title-row">
+        <h1>Financial Snapshot</h1>
+        <button class="info-btn" onclick="toggleInfo('info-home')" title="What is this?">i</button>
+      </div>
+      <div class="info-box" id="info-home">Your personal money dashboard — see exactly how much you have left this month, what you owe every month, and a quick look at where your money is going. Everything updates the moment you log a purchase.</div>
+      <p class="sub" id="home-sub"></p>
+    </div>
+
+    <!-- TOP ROW: the two numbers that matter most -->
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr;margin-bottom:24px">
+      <div class="stat-card">
+        <div class="stat-label-row">
+          <div class="stat-label">Available money</div>
+          <button class="info-btn" onclick="toggleInfo('info-avail')" title="What is this?">i</button>
+        </div>
+        <div class="info-box" id="info-avail">This is how much money you actually have left to spend this month. It's calculated as: <strong style="color:var(--text)">your income this month − monthly commitments − purchases you've logged.</strong> It turns red if you've gone over budget.</div>
+        <div class="stat-val green" id="h-avail">$0.00</div>
+        <div class="stat-sub" id="h-income-sub"></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label-row">
+          <div class="stat-label">Monthly commitments</div>
+          <button class="info-btn" onclick="toggleInfo('info-fixed')" title="What is this?">i</button>
+        </div>
+        <div class="info-box" id="info-fixed">Everything you <em>have</em> to pay every month — rent, car note, phone bill, streaming services, gym, insurance, etc. Add them below so ClearSpend can subtract them from your income automatically.</div>
+        <div class="stat-val" id="h-fixed">$0.00</div>
+      </div>
+    </div>
+
+    <!-- COMPACT COLOR KEY — one tidy row -->
+    <div class="color-key-bar">
+      <span class="ck-item"><span class="ck-dot" style="background:var(--green)"></span>Green = under budget</span>
+      <span class="ck-item"><span class="ck-dot" style="background:var(--red)"></span>Red = over budget</span>
+      <span class="ck-item"><span class="ck-dot" style="background:var(--orange)"></span>Yellow = daily target</span>
+      <span class="ck-item"><span class="ck-dot" style="background:var(--bg3);border:1px solid var(--border)"></span>Gray = no spending</span>
+    </div>
+
+    <!-- SPENDING PIE CHART + RECOMMENDATIONS -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title-row">
+        <div class="card-title">Where your money goes</div>
+        <button class="info-btn" onclick="toggleInfo('info-pie')" title="What is this?">i</button>
+      </div>
+      <div class="info-box" id="info-pie">A breakdown of your spending this month by category, based on the purchases you've logged. The tips on the right flag any category eating up a big share of your budget so you know where you could cut back.</div>
+      <div id="pie-wrap" style="display:flex;gap:28px;flex-wrap:wrap;align-items:center">
+        <div id="pie-empty" class="empty-state" style="width:100%">Log some purchases to see where your money goes</div>
+      </div>
+    </div>
+
+    <div class="cols-2">
+      <!-- LEFT: income + commitments -->
+      <div>
+        <div class="card">
+          <div class="card-title-row">
+            <div class="card-title">Set your income</div>
+            <button class="info-btn" onclick="toggleInfo('info-income')" title="What is this?">i</button>
+          </div>
+          <div class="info-box" id="info-income">Tell ClearSpend how much you get paid and how often. For biweekly or weekly pay, you can enter your exact pay dates so the math is right for each specific month — not just an estimate.</div>
+          <div class="form-row">
+            <div class="form-group"><label for="inc-amt" id="inc-amt-label">Amount ($)</label><input type="number" id="inc-amt" placeholder="3000" min="0" /></div>
+            <div class="form-group"><label for="inc-freq">Frequency</label>
+              <select id="inc-freq" onchange="onIncomeFreqChange()">
+                <option value="monthly">Monthly</option>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Biweekly (every 2 weeks)</option>
+              </select>
+            </div>
+          </div>
+          <div id="pay-schedule-section" style="display:none">
+            <label>How should we count paychecks per month?</label>
+            <div class="radio-group">
+              <label class="radio-option" data-pay-mode="average"><input type="radio" name="pay-mode" value="average" onchange="onPayModeChange('average')" />Simple average</label>
+              <label class="radio-option" data-pay-mode="pattern"><input type="radio" name="pay-mode" value="pattern" onchange="onPayModeChange('pattern')" />Recurring pattern (every other Friday, etc)</label>
+              <label class="radio-option" data-pay-mode="manual"><input type="radio" name="pay-mode" value="manual" onchange="onPayModeChange('manual')" />Pick exact pay dates</label>
+            </div>
+            <div class="pay-pattern-box" id="pay-pattern-box">
+              <label for="pay-anchor-date">Enter one known pay date — we'll calculate the rest from it</label>
+              <input type="date" id="pay-anchor-date" />
+              <div style="font-size:12px;color:var(--text3);margin-top:8px">Example: if you get paid every other Friday and last got paid June 12, enter that date.</div>
+            </div>
+            <div class="pay-manual-box" id="pay-manual-box">
+              <label for="pay-manual-date">Add specific pay dates</label>
+              <div style="display:flex;gap:8px"><input type="date" id="pay-manual-date" style="flex:1" /><button class="btn btn-ghost btn-sm" onclick="addManualPayDate()" style="white-space:nowrap">+ Add</button></div>
+              <div class="date-tag-list" id="manual-date-tags"></div>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveIncome()" style="margin-top:14px;width:100%">Save income</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title-row">
+            <div class="card-title">Monthly commitments</div>
+            <button class="info-btn" onclick="toggleInfo('info-fixedpay')" title="What is this?">i</button>
+          </div>
+          <div class="info-box" id="info-fixedpay">Add everything you pay every single month — rent or mortgage, car payment, phone bill, Netflix, Spotify, gym, insurance, student loans, etc. Once added, ClearSpend automatically subtracts these from your income every month so your available money is always accurate.</div>
+          <div class="form-row">
+            <div class="form-group"><label for="exp-n">Payment name</label><input type="text" id="exp-n" placeholder="Rent, Netflix, gym…" /></div>
+            <div class="form-group"><label for="exp-a">Amount ($)</label><input type="number" id="exp-a" placeholder="0.00" min="0" /></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="addExpense()">+ Add commitment</button>
+          <div style="margin-top:14px" id="exp-list"><p class="empty-state">No monthly commitments yet</p></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: recent activity only -->
+      <div>
+        <div class="card">
+          <div class="card-title-row">
+            <div class="card-title">Recent activity</div>
+            <button class="info-btn" onclick="toggleInfo('info-recent')" title="What is this?">i</button>
+          </div>
+          <div class="info-box" id="info-recent">Your 5 most recent purchases across all cards, newest first. Head to the Purchase tab to log a new transaction or see your full history.</div>
+          <div id="recent-activity"><p class="empty-state">No purchases yet — go to Purchase to log your first one</p></div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /home -->
+
+  <!-- PURCHASE -->
+  <div id="s-purchase" class="screen">
+    <div class="page-header">
+      <div class="title-row">
+      <h1>Log a purchase</h1>
+      <button class="info-btn" onclick="toggleInfo('info-purchase')" title="What is this?">i</button>
+    </div>
+    <div class="info-box" id="info-purchase">Record any card purchase here and it will instantly update your available money, your card utilization, and your daily calendar. You must add a card first before logging a purchase.</div>
+    </div>
+    <div class="cols-2">
+      <div class="card">
+        <div class="form-row">
+          <div class="form-group"><label for="p-amt">Amount ($)</label><input type="number" id="p-amt" placeholder="0.00" min="0" step="0.01" /></div>
+          <div class="form-group"><label for="p-card">Card used</label><select id="p-card"><option value="">— Select card —</option></select></div>
+        </div>
+        <div class="form-group"><label for="p-cat">Category</label>
+          <select id="p-cat">
+            <option value="food">Food &amp; dining</option><option value="gas">Gas &amp; transport</option><option value="shopping">Shopping</option><option value="entertainment">Entertainment</option><option value="health">Health &amp; wellness</option><option value="utilities">Utilities</option><option value="travel">Travel</option><option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label for="p-note">Note (optional)</label><input type="text" id="p-note" placeholder="Groceries, gas, coffee…" /></div>
+        <div class="form-group"><label for="p-date">Date</label><input type="date" id="p-date" /></div>
+        <button class="btn btn-primary" style="width:100%" onclick="logPurchase()">Record purchase</button>
+      </div>
+      <div class="card"><div class="card-title-row">
+          <div class="card-title">All purchases</div>
+          <button class="info-btn" onclick="toggleInfo('info-allpurch')" title="What is this?">i</button>
+        </div>
+        <div class="info-box" id="info-allpurch">Every transaction you've logged, newest first. Use the × button to remove any entry — your balance and calendar update automatically.</div><div id="p-list"><p class="empty-state">No purchases yet</p></div></div>
+    </div>
+  </div>
+
+  <!-- CARDS -->
+  <div id="s-cards" class="screen">
+    <div class="page-header">
+      <div class="title-row">
+      <h1>My cards</h1>
+      <button class="info-btn" onclick="toggleInfo('info-cards')" title="What is this?">i</button>
+    </div>
+    <div class="info-box" id="info-cards">Add every credit or debit card you use. ClearSpend tracks how much you've spent on each one, your utilization percentage (ideally under 30% for your credit score), and how many days until your next payment is due.</div>
+    </div>
+    <div class="cols-2">
+      <div class="card">
+        <div class="card-title-row">
+          <div class="card-title">Add a card</div>
+          <button class="info-btn" onclick="toggleInfo('info-addcard')" title="What is this?">i</button>
+        </div>
+        <div class="info-box" id="info-addcard">Enter the card's name, network, credit limit, APR, and due date. You don't need to enter all fields — at minimum just a name so you can select it when logging purchases.</div>
+        <div class="form-row">
+          <div class="form-group"><label for="c-name">Card name</label><input type="text" id="c-name" placeholder="Chase Sapphire, Amex Gold…" /></div>
+          <div class="form-group"><label for="c-type">Network</label><select id="c-type"><option value="visa">Visa</option><option value="mastercard">Mastercard</option><option value="amex">Amex</option><option value="discover">Discover</option><option value="debit">Debit</option><option value="other">Other</option></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="c-limit">Credit limit ($)</label><input type="number" id="c-limit" placeholder="10000" min="0" /></div>
+          <div class="form-group"><label for="c-apr">APR (%)</label><input type="number" id="c-apr" placeholder="24.99" step="0.01" min="0" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="c-due">Due date (day of month)</label><input type="number" id="c-due" placeholder="15" min="1" max="31" /></div>
+          <div class="form-group"><label for="c-bal">Current balance owed ($)</label><input type="number" id="c-bal" placeholder="0.00" step="0.01" min="0" /></div>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="addCard()">Add card</button>
+      </div>
+      <div><div id="c-list"><p class="empty-state">No cards added yet</p></div></div>
+    </div>
+  </div>
+
+  <!-- BUDGET -->
+  <div id="s-budget" class="screen">
+    <div class="page-header">
+      <div class="title-row">
+        <h1>Budget Tracker</h1>
+        <button class="info-btn" onclick="toggleInfo('info-budget')" title="What is this?">i</button>
+      </div>
+      <div class="info-box" id="info-budget">Set a spending target for any category and watch it fill up automatically as you log purchases. Preset categories (like Food or Gas) track your logged purchases automatically. Your monthly commitments (rent, subscriptions) are also counted. Green means you're under budget, yellow is getting close, red means you've gone over.</div>
+    </div>
+
+    <div class="stat-grid" id="budget-stats" style="grid-template-columns:1fr 1fr 1fr"></div>
+
+    <div class="cols-2">
+      <div>
+        <div class="card">
+          <div class="card-title-row">
+            <div class="card-title">Add a budget</div>
+            <button class="info-btn" onclick="toggleInfo('info-addbudget')" title="What is this?">i</button>
+          </div>
+          <div class="info-box" id="info-addbudget">Pick a preset category to auto-track your logged spending, or choose "Custom" to name your own (like "Coffee" or "Pets"). Custom budgets don't auto-track — you update them yourself with the + button. Set how much you want to spend and whether it's a weekly or monthly limit.</div>
+          <div class="form-group">
+            <label for="bud-cat">Category</label>
+            <select id="bud-cat" onchange="onBudgetCatChange()">
+              <option value="food">Food &amp; dining (auto-tracks)</option>
+              <option value="gas">Gas &amp; transport (auto-tracks)</option>
+              <option value="shopping">Shopping (auto-tracks)</option>
+              <option value="entertainment">Entertainment (auto-tracks)</option>
+              <option value="health">Health &amp; wellness (auto-tracks)</option>
+              <option value="utilities">Utilities (auto-tracks)</option>
+              <option value="travel">Travel (auto-tracks)</option>
+              <option value="other">Other (auto-tracks)</option>
+              <option value="commitments">Bills &amp; commitments (auto-tracks)</option>
+              <option value="__custom">Custom category…</option>
+            </select>
+          </div>
+          <div class="form-group" id="bud-custom-wrap" style="display:none">
+            <label for="bud-custom-name">Custom category name</label>
+            <input type="text" id="bud-custom-name" placeholder="Coffee, pets, hobbies…" />
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="bud-amt">Budget amount ($)</label><input type="number" id="bud-amt" placeholder="400" min="0" /></div>
+            <div class="form-group"><label for="bud-period">Period</label>
+              <select id="bud-period"><option value="monthly">Per month</option><option value="weekly">Per week</option></select>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="addBudget()">Add budget</button>
+        </div>
+
+        <div class="card" id="bud-manual-card" style="display:none">
+          <div class="card-title-row">
+            <div class="card-title">Update a custom budget</div>
+            <button class="info-btn" onclick="toggleInfo('info-budmanual')" title="What is this?">i</button>
+          </div>
+          <div class="info-box" id="info-budmanual">Custom categories don't track automatically (since they're not tied to your purchase categories). Log spending against them here whenever you spend in that category.</div>
+          <div class="form-row">
+            <div class="form-group"><label for="bud-manual-sel">Custom budget</label><select id="bud-manual-sel"></select></div>
+            <div class="form-group"><label for="bud-manual-amt">Add spending ($)</label><input type="number" id="bud-manual-amt" placeholder="25" min="0" /></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="addBudgetSpend()">+ Add spending</button>
+        </div>
+      </div>
+
+      <div id="budget-list"><p class="empty-state">No budgets yet. Add one to start tracking!</p></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR -->
+  <div id="s-calendar" class="screen">
+    <div class="page-header">
+      <div class="title-row">
+      <h1>Daily tracker</h1>
+      <button class="info-btn" onclick="toggleInfo('info-calendar')" title="What is this?">i</button>
+    </div>
+    <div class="info-box" id="info-calendar">Every day of the month shown as a colored square — green means you spent under your daily budget, red means over, gray means no spending logged. Payday dates (if set) are outlined in green.</div>
+    </div>
+    <div class="cal-legend">
+      <span><span class="legend-dot green"></span>Under budget</span>
+      <span><span class="legend-dot red"></span>Over budget</span>
+      <span><span class="legend-dot gray"></span>No spending</span>
+      <span><span class="legend-dot payday"></span>Payday</span>
+    </div>
+    <div class="cols-2">
+      <div class="card">
+        <div class="cal-nav">
+          <button class="btn btn-ghost btn-sm" onclick="calMove(-1)">&#8592; Prev</button>
+          <span class="cal-month-title" id="cal-label"></span>
+          <button class="btn btn-ghost btn-sm" onclick="calMove(1)">Next &#8594;</button>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-head">Sun</div><div class="cal-head">Mon</div><div class="cal-head">Tue</div><div class="cal-head">Wed</div><div class="cal-head">Thu</div><div class="cal-head">Fri</div><div class="cal-head">Sat</div>
+          <div id="cal-days" style="display:contents"></div>
+        </div>
+      </div>
+      <div class="card" id="cal-stats"></div>
+    </div>
+  </div>
+
+  <!-- GOALS -->
+  <div id="s-goals" class="screen">
+    <div class="page-header">
+      <div class="title-row">
+      <h1>Savings goals</h1>
+      <button class="info-btn" onclick="toggleInfo('info-goals')" title="What is this?">i</button>
+    </div>
+    <div class="info-box" id="info-goals">Set a target amount and optional deadline for anything you're saving toward — an emergency fund, vacation, or big purchase. Add funds anytime to track your progress toward each goal.</div>
+    </div>
+    <div class="cols-2">
+      <div>
+        <div class="card">
+          <div class="card-title-row">
+          <div class="card-title">Add a goal</div>
+          <button class="info-btn" onclick="toggleInfo('info-addgoal')" title="What is this?">i</button>
+        </div>
+        <div class="info-box" id="info-addgoal">Name your goal, set a target dollar amount, and optionally pick a deadline date. ClearSpend will show you how much you'd need to save per month to hit it on time.</div>
+          <div class="form-group"><label for="g-name">Goal name</label><input type="text" id="g-name" placeholder="Emergency fund, vacation, new laptop…" /></div>
+          <div class="form-row">
+            <div class="form-group"><label for="g-target">Target amount ($)</label><input type="number" id="g-target" placeholder="5000" min="0" /></div>
+            <div class="form-group"><label for="g-saved">Already saved ($)</label><input type="number" id="g-saved" placeholder="0" min="0" /></div>
+          </div>
+          <div class="form-group"><label for="g-date">Target date (optional)</label><input type="date" id="g-date" /></div>
+          <button class="btn btn-primary" style="width:100%" onclick="addGoal()">Add goal</button>
+        </div>
+        <div class="card">
+          <div class="card-title-row">
+          <div class="card-title">Add funds to a goal</div>
+          <button class="info-btn" onclick="toggleInfo('info-addfunds')" title="What is this?">i</button>
+        </div>
+        <div class="info-box" id="info-addfunds">Select a goal from the dropdown and enter an amount to add — this updates its progress bar. Use this whenever you set money aside toward that goal.</div>
+          <div class="form-row">
+            <div class="form-group"><label for="g-sel">Select goal</label><select id="g-sel"><option value="">No goals yet</option></select></div>
+            <div class="form-group"><label for="g-add-amt">Amount ($)</label><input type="number" id="g-add-amt" placeholder="50" min="0" /></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="addToGoal()">+ Add funds</button>
+        </div>
+      </div>
+      <div id="g-list"><p class="empty-state">No goals yet. Add one to start saving!</p></div>
+    </div>
+  </div>
+
+  <!-- CALCULATOR -->
+  <div id="s-calculator" class="screen">
+    <div class="page-header">
+      <div class="title-row">
+        <h1>Interest Calculator</h1>
+        <button class="info-btn" onclick="toggleInfo('info-calc')" title="What is this?">i</button>
+      </div>
+      <div class="info-box" id="info-calc">When you don't pay off your full credit card balance, the bank charges you extra money called <strong style="color:var(--text)">interest</strong> — basically a fee for borrowing. This tool shows you in plain dollars how much that fee is costing you, and how long it'll take to become debt-free.</div>
+    </div>
+
+    <!-- Plain-English explainer box, always visible -->
+    <div class="card" style="border-left:3px solid var(--orange)">
+      <div style="font-size:14px;color:var(--text2);line-height:1.7">
+        <strong style="color:var(--orange)">New to this? Here's the short version:</strong><br>
+        A credit card lets you borrow money to buy things. If you pay back the full amount each month, it costs you nothing extra. But if you only pay part of it, the bank charges <strong style="color:var(--text)">interest</strong> — a daily fee on whatever you still owe. The fee is based on your card's <strong style="color:var(--text)">APR</strong> (the yearly interest rate, usually around 20–30%). Fill in the boxes below and we'll show you exactly what it's costing you in real dollars.
+      </div>
+    </div>
+
+    <div class="cols-2">
+      <div class="card">
+        <div class="card-title-row">
+          <div class="card-title">Your card details</div>
+          <button class="info-btn" onclick="toggleInfo('info-carddetails')" title="What is this?">i</button>
+        </div>
+        <div class="info-box" id="info-carddetails">Don't worry if you don't know every number — just fill in what you can. Your APR and balance are printed on your monthly statement or in your card's app.</div>
+
+        <div class="form-group">
+          <label for="cc-limit">Credit limit ($) — the most your card lets you spend</label>
+          <input type="number" id="cc-limit" placeholder="10000" oninput="runCalc()" />
+        </div>
+        <div class="form-group">
+          <label for="cc-charged">How much you owe right now ($)</label>
+          <input type="number" id="cc-charged" placeholder="2500" oninput="runCalc()" />
+        </div>
+        <div class="form-group">
+          <label for="cc-apr">APR (%) — your card's yearly interest rate</label>
+          <input type="number" id="cc-apr" placeholder="24.99" step="0.01" oninput="runCalc()" />
+          <div style="font-size:12px;color:var(--text3);margin-top:6px">This is on your statement. Most cards are between 20% and 30%. If you're not sure, try 24.99%.</div>
+        </div>
+        <div class="form-group">
+          <label for="cc-due">When is your payment due?</label>
+          <input type="date" id="cc-due" oninput="runCalc()" />
+        </div>
+        <div class="form-group">
+          <label for="cc-pay">How much can you pay per month? ($) — optional</label>
+          <input type="number" id="cc-pay" placeholder="100" oninput="runCalc()" />
+          <div style="font-size:12px;color:var(--text3);margin-top:6px">Fill this in to find out how many months until your card is fully paid off, and the total interest you'll pay along the way.</div>
+        </div>
+      </div>
+
+      <div id="calc-out" class="result-box" style="display:none">
+        <div class="result-box-title" style="display:flex;align-items:center;gap:6px">What this is costing you <button class="info-btn" onclick="toggleInfo('info-results')" title="What is this?" style="margin-left:0">i</button></div>
+        <div class="info-box" id="info-results">Interest is charged a little bit every single day on what you owe. The longer you take to pay it off, the more these daily fees add up. "Utilization" is how much of your limit you're using — keeping it under 30% is good for your credit score.</div>
+        <div class="result-grid">
+          <div class="result-item"><div class="r-label">Credit you have left to use</div><div class="r-val good" id="r-available">—</div></div>
+          <div class="result-item"><div class="r-label">How much of your limit you're using</div><div class="r-val" id="r-util">—</div></div>
+          <div class="result-item"><div class="r-label">Interest fee per day</div><div class="r-val danger" id="r-daily">—</div></div>
+          <div class="result-item"><div class="r-label">Interest added by your due date</div><div class="r-val danger" id="r-due">—</div></div>
+        </div>
+        <div id="calc-payoff-section" style="display:none">
+          <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:16px">
+            <div class="result-grid">
+              <div class="result-item"><div class="r-label">Months until paid off</div><div class="r-val" id="r-months">—</div></div>
+              <div class="result-item"><div class="r-label">Total interest you'll pay</div><div class="r-val danger" id="r-interest">—</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="result-advice" id="r-tip"></div>
+        <div id="calc-chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YEAR REVIEW -->
+  <div id="s-review" class="screen">
+    <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+      <div>
+        <div class="title-row">
+      <h1>Year in review</h1>
+      <button class="info-btn" onclick="toggleInfo('info-review')" title="What is this?">i</button>
+    </div>
+    <div class="info-box" id="info-review">A full-year view of your spending habits — each dot represents one day, colored green (under budget) or red (over budget). Your budget score is the % of tracked days you stayed on target.</div>
+      </div>
+      <select id="review-year" onchange="renderYearReview()" style="width:auto"></select>
+    </div>
+    <div class="stat-grid" id="yr-stats"></div>
+    <div class="cols-2">
+      <div class="card"><div class="card-title">Monthly heatmap — every day of the year</div><div id="yr-heatmap"></div></div>
+      <div class="card"><div class="card-title">Spending by category</div><div id="yr-categories"></div></div>
+    </div>
+  </div>
+
+</div><!-- .page -->
+
+<script>
+
+// ============================================================
+// TOOLTIP TOGGLE
+// Called by every ⓘ button. Toggles the matching info-box
+// open/closed and flips the button's .active highlight.
+// ============================================================
+function toggleInfo(id) {
+  const box = document.getElementById(id);
+  if (!box) return;
+  const isOpen = box.classList.contains('show');
+  // Close all open info boxes first so only one is open at a time
+  document.querySelectorAll('.info-box.show').forEach(b => b.classList.remove('show'));
+  document.querySelectorAll('.info-btn.active').forEach(b => b.classList.remove('active'));
+  if (!isOpen) {
+    box.classList.add('show');
+    // Find the button that triggered this box and highlight it
+    const btn = document.querySelector(`[onclick="toggleInfo('${id}')"]`);
+    if (btn) btn.classList.add('active');
+  }
+}
+
+// ============================================================
+// STATE & STORAGE
+// ============================================================
+const STORAGE_KEY = 'clearspend_v3';
+let state = {
+  income: 0, incomeFreq: 'monthly', payMode: 'average',
+  payAnchorDate: '', payManualDates: [],
+  expenses: [], cards: [], purchases: [], goals: [], budgets: [],
+  calYear: new Date().getFullYear(), calMonth: new Date().getMonth()
+};
+function saveState() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {} }
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) { const l = JSON.parse(raw); state = {...state,...l, calYear:l.calYear||new Date().getFullYear(), calMonth:l.calMonth!=null?l.calMonth:new Date().getMonth(), payManualDates:l.payManualDates||[], budgets:l.budgets||[]}; }
+  } catch(e) {}
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmt(n) { const a=Math.abs(n); return (n<0?'-':'')+'$'+a.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function getMonthPurchases(year,month) { return state.purchases.filter(p=>{const d=new Date(p.date+'T00:00:00');return d.getFullYear()===year&&d.getMonth()===month;}); }
+function getDayPurchases(dateStr) { return state.purchases.filter(p=>p.date===dateStr); }
+function getNetTag(type) {
+  const cls={visa:'net-visa',mastercard:'net-mastercard',amex:'net-amex',debit:'net-debit',discover:'net-discover',other:'net-other'};
+  const lbl={visa:'VISA',mastercard:'MC',amex:'AMEX',debit:'DEBIT',discover:'DISC',other:'CARD'};
+  return `<span class="net-tag ${cls[type]||'net-other'}">${lbl[type]||'CARD'}</span>`;
+}
+
+// ============================================================
+// PAY SCHEDULE — counts actual paychecks landing in a month
+// instead of using a flat 2.17x / 4.33x multiplier
+// ============================================================
+function getPayDatesInMonth(year,month) {
+  if (state.incomeFreq==='monthly') return [`${year}-${String(month+1).padStart(2,'0')}-01`];
+  if (state.payMode==='manual') return state.payManualDates.filter(ds=>{const d=new Date(ds+'T00:00:00');return d.getFullYear()===year&&d.getMonth()===month;});
+  if (state.payMode==='pattern'&&state.payAnchorDate) {
+    const interval=state.incomeFreq==='weekly'?7:14;
+    const anchor=new Date(state.payAnchorDate+'T00:00:00');
+    const start=new Date(year,month,1),end=new Date(year,month+1,0);
+    const dates=[];
+    if (anchor<=end) {
+      let c=new Date(anchor);
+      while(c<start){const n=new Date(c);n.setDate(n.getDate()+interval);if(n>end)break;c=n;}
+      while(c<=end){if(c>=start)dates.push(c.toISOString().split('T')[0]);c.setDate(c.getDate()+interval);}
+    } else {
+      let c=new Date(anchor);
+      while(c>end)c.setDate(c.getDate()-interval);
+      while(c>=start){if(c<=end)dates.push(c.toISOString().split('T')[0]);c.setDate(c.getDate()-interval);}
+      dates.reverse();
+    }
+    return dates;
+  }
+  const avg=state.incomeFreq==='weekly'?4.33:2.17;
+  return new Array(Math.round(avg)).fill(`${year}-${String(month+1).padStart(2,'0')}-01`);
+}
+function getMonthlyIncome(year,month) {
+  if (state.incomeFreq==='monthly') return state.income;
+  if (state.payMode==='average') return state.income*(state.incomeFreq==='weekly'?4.33:2.17);
+  return state.income*getPayDatesInMonth(year,month).length;
+}
+function getDailyBudget(year,month) {
+  const days=new Date(year,month+1,0).getDate();
+  const fixed=state.expenses.reduce((s,e)=>s+e.amt,0);
+  const income=getMonthlyIncome(year,month);
+  return income>0?(income-fixed)/days:0;
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function setupNav() {
+  document.querySelectorAll('.nav-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const s=btn.dataset.section;
+      document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('s-'+s).classList.add('active');
+      if(s==='budget')renderBudgets();
+      if(s==='calendar')renderCalendar();
+      if(s==='review')renderYearReview();
+      if(s==='purchase')updateCardDropdown();
+    });
+  });
+}
+
+// ============================================================
+// HOME SCREEN
+// ============================================================
+// ============================================================
+// SPENDING PIE / DONUT CHART (Home)
+// Draws an SVG donut of this month's spending by category and
+// generates plain-English recommendations for big categories.
+// No charting library needed — the donut is built from SVG arcs.
+// ============================================================
+const CAT_LABELS = { food:'Food & dining', gas:'Gas & transport', shopping:'Shopping', entertainment:'Entertainment', health:'Health', utilities:'Utilities', travel:'Travel', other:'Other', commitments:'Bills & commitments' };
+const CAT_COLORS = { food:'#ffd23f', gas:'#4a9eff', shopping:'#ff6b9d', entertainment:'#b06bff', health:'#00d084', utilities:'#ff8c42', travel:'#00c2c2', other:'#888888', commitments:'#ff5a5a' };
+
+// Recommendation rules: if a category exceeds its threshold % of spending,
+// show the matching tip. Thresholds are rough "watch out" levels.
+const CAT_TIPS = {
+  food: { pct: 20, tip: "You're spending a lot on food. Cooking at home a few more nights a week could free up real money." },
+  shopping: { pct: 20, tip: "Shopping is taking a big share. Try a 24-hour wait before non-essential buys to cut impulse spending." },
+  entertainment: { pct: 15, tip: "Entertainment is adding up. Check for subscriptions you're not really using." },
+  travel: { pct: 25, tip: "Travel is a large chunk this month. Booking earlier or off-peak can lower these costs." },
+  gas: { pct: 20, tip: "Transport costs are high. Combining trips or carpooling could help here." },
+  other: { pct: 30, tip: "A lot of your spending is uncategorized. Try tagging purchases more specifically to see where it really goes." }
+};
+
+function renderPie() {
+  const now = new Date();
+  const monthPurch = getMonthPurchases(now.getFullYear(), now.getMonth());
+  const wrap = document.getElementById('pie-wrap');
+  if (!wrap) return;
+
+  // Total spending per category this month
+  const totals = {};
+  monthPurch.forEach(p => { totals[p.cat] = (totals[p.cat] || 0) + p.amt; });
+  const grand = Object.values(totals).reduce((s, v) => s + v, 0);
+
+  if (grand === 0) {
+    wrap.innerHTML = '<div id="pie-empty" class="empty-state" style="width:100%">Log some purchases to see where your money goes</div>';
+    return;
+  }
+
+  // Sort categories biggest first
+  const entries = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+
+  // ---- Build the SVG donut ----
+  const size = 180, cx = size / 2, cy = size / 2, r = 70, thickness = 30;
+  let angle = -90; // start at top
+  let arcs = '';
+  entries.forEach(([cat, amt]) => {
+    const pct = amt / grand;
+    const sweep = pct * 360;
+    const a1 = angle * Math.PI / 180;
+    const a2 = (angle + sweep) * Math.PI / 180;
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const x2 = cx + r * Math.cos(a2), y2 = cy + r * Math.sin(a2);
+    const large = sweep > 180 ? 1 : 0;
+    const color = CAT_COLORS[cat] || '#888';
+    arcs += `<path d="M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="${thickness}" />`;
+    angle += sweep;
+  });
+  const svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0">
+    ${arcs}
+    <text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="var(--text2)" font-size="11">Total spent</text>
+    <text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="var(--text)" font-size="18" font-weight="700">${fmt(grand)}</text>
+  </svg>`;
+
+  // ---- Legend with percentages ----
+  let legend = '<div style="flex:1;min-width:200px">';
+  entries.forEach(([cat, amt]) => {
+    const pct = Math.round(amt / grand * 100);
+    const color = CAT_COLORS[cat] || '#888';
+    legend += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="width:11px;height:11px;border-radius:3px;background:${color};flex-shrink:0"></span>
+        <span style="font-size:13px;color:var(--text2)">${CAT_LABELS[cat] || cat}</span>
+      </div>
+      <div style="font-size:13px;font-weight:600">${pct}% · ${fmt(amt)}</div>
+    </div>`;
+  });
+  legend += '</div>';
+
+  // ---- Recommendations ----
+  let recs = '';
+  entries.forEach(([cat, amt]) => {
+    const pct = amt / grand * 100;
+    const rule = CAT_TIPS[cat];
+    if (rule && pct >= rule.pct) {
+      recs += `<div style="display:flex;gap:8px;margin-bottom:10px;font-size:12.5px;color:var(--text2);line-height:1.5">
+        <span style="color:var(--orange);flex-shrink:0">💡</span><span>${rule.tip}</span>
+      </div>`;
+    }
+  });
+  if (!recs) {
+    recs = '<div style="font-size:12.5px;color:var(--green)">✓ Your spending looks well balanced across categories this month.</div>';
+  }
+  const recBox = `<div style="flex:1;min-width:220px">
+    <div style="font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px">Tips for you</div>
+    ${recs}
+  </div>`;
+
+  wrap.innerHTML = svg + legend + recBox;
+}
+
+function renderHome() {
+  const now=new Date(),month=now.getMonth(),year=now.getFullYear();
+  const fixed=state.expenses.reduce((s,e)=>s+e.amt,0);
+  const purch=getMonthPurchases(year,month).reduce((s,p)=>s+p.amt,0);
+  const income=getMonthlyIncome(year,month);
+  const avail=income-fixed-purch;
+  const days=new Date(year,month+1,0).getDate();
+  const daily=income>0?(income-fixed)/days:0;
+  // Helper: safely set text only if the element exists (home page was simplified,
+  // so some old elements may not be present — this prevents JS errors).
+  const setText=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  const setWidth=(id,val)=>{const el=document.getElementById(id);if(el)el.style.width=val;};
+
+  const availEl=document.getElementById('h-avail');
+  if(availEl){availEl.textContent=fmt(avail);availEl.className='stat-val '+(avail>=0?'green':'red');}
+  setText('h-spent',fmt(purch));
+  setText('h-daily',fmt(daily));
+  setText('h-fixed',fmt(fixed));
+  setText('home-sub',now.toLocaleString('default',{month:'long',year:'numeric'}));
+  const sub=document.getElementById('h-income-sub');
+  if(sub&&state.incomeFreq!=='monthly'&&state.income>0){
+    const pd=getPayDatesInMonth(year,month);
+    const count=state.payMode==='average'?Math.round(state.incomeFreq==='weekly'?4.33:2.17):pd.length;
+    sub.textContent=`${fmt(income)} this month (${count} paycheck${count===1?'':'s'} × ${fmt(state.income)})`;
+  } else if(sub) sub.textContent='';
+  const el=document.getElementById('exp-list');
+  el.innerHTML=state.expenses.length===0?'<p class="empty-state">No monthly commitments yet</p>':state.expenses.map(e=>`<div class="list-row"><div class="list-row-main">${e.name}</div><div style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;font-weight:700">${fmt(e.amt)}</span><button class="btn-danger" onclick="removeExpense(${e.id})">×</button></div></div>`).join('');
+  // Spending breakdown bars (only present on some layouts — guarded with setText/setWidth)
+  if(income>0){
+    const fp=Math.min(100,fixed/income*100),pp=Math.min(100,purch/income*100),rp=Math.max(0,100-fp-pp);
+    setWidth('pb-fixed',fp+'%'); setWidth('pb-purch',pp+'%'); setWidth('pb-remain',rp+'%');
+    setText('b-fixed',fmt(fixed)+' ('+Math.round(fp)+'%)');
+    setText('b-purch',fmt(purch)+' ('+Math.round(pp)+'%)');
+    setText('b-remain',fmt(Math.max(0,avail))+' ('+Math.round(rp)+'%)');
+  } else {
+    ['b-fixed','b-purch','b-remain'].forEach(id=>setText(id,'—'));
+    ['pb-fixed','pb-purch','pb-remain'].forEach(id=>setWidth(id,'0%'));
+  }
+  const ra=document.getElementById('recent-activity');
+  ra.innerHTML=state.purchases.length===0?'<p class="empty-state">No purchases yet</p>':state.purchases.slice().reverse().slice(0,5).map(p=>`<div class="list-row"><div style="display:flex;align-items:center;gap:10px">${getNetTag(p.cardType)}<div><div class="list-row-main">${fmt(p.amt)}</div><div class="list-row-sub">${p.cardName}${p.note?' · '+p.note:''}</div></div></div><span style="font-size:12px;color:var(--text3)">${p.date}</span></div>`).join('');
+  if(typeof renderPie==='function') renderPie();
+}
+function onIncomeFreqChange() {
+  const freq=document.getElementById('inc-freq').value;
+  document.getElementById('pay-schedule-section').style.display=freq==='monthly'?'none':'block';
+  document.getElementById('inc-amt-label').textContent=freq==='monthly'?'Amount ($)':'Amount per paycheck ($)';
+}
+function onPayModeChange(mode) {
+  state.payMode=mode;
+  document.querySelectorAll('.radio-option[data-pay-mode]').forEach(el=>el.classList.toggle('selected',el.dataset.payMode===mode));
+  document.getElementById('pay-pattern-box').classList.toggle('show',mode==='pattern');
+  document.getElementById('pay-manual-box').classList.toggle('show',mode==='manual');
+  renderManualDateTags();
+}
+function addManualPayDate() {
+  const val=document.getElementById('pay-manual-date').value;
+  if(!val)return;
+  if(!state.payManualDates.includes(val)){state.payManualDates.push(val);state.payManualDates.sort();}
+  document.getElementById('pay-manual-date').value='';
+  renderManualDateTags();
+}
+function removeManualPayDate(d) { state.payManualDates=state.payManualDates.filter(x=>x!==d); renderManualDateTags(); }
+function renderManualDateTags() {
+  const el=document.getElementById('manual-date-tags');
+  if(!el)return;
+  el.innerHTML=state.payManualDates.length===0?'<p style="font-size:12px;color:var(--text3);padding:8px">No dates added yet</p>':state.payManualDates.map(d=>`<span class="date-tag">${d}<button onclick="removeManualPayDate('${d}')">×</button></span>`).join('');
+}
+function saveIncome() {
+  state.income=parseFloat(document.getElementById('inc-amt').value)||0;
+  state.incomeFreq=document.getElementById('inc-freq').value;
+  if(state.incomeFreq!=='monthly'){
+    const r=document.querySelector('input[name="pay-mode"]:checked');
+    state.payMode=r?r.value:'average';
+    if(state.payMode==='pattern')state.payAnchorDate=document.getElementById('pay-anchor-date').value||'';
+  } else state.payMode='average';
+  saveState();renderHome();renderCalendar();
+}
+function addExpense() {
+  const name=document.getElementById('exp-n').value.trim(),amt=parseFloat(document.getElementById('exp-a').value)||0;
+  if(!name||!amt)return;
+  state.expenses.push({name,amt,id:Date.now()});
+  document.getElementById('exp-n').value='';document.getElementById('exp-a').value='';
+  saveState();renderHome();renderCalendar();
+}
+function removeExpense(id) { state.expenses=state.expenses.filter(e=>e.id!==id); saveState();renderHome();renderCalendar(); }
+function restoreIncomeForm() {
+  if(state.income>0)document.getElementById('inc-amt').value=state.income;
+  document.getElementById('inc-freq').value=state.incomeFreq||'monthly';
+  onIncomeFreqChange();
+  const r=document.querySelector(`input[name="pay-mode"][value="${state.payMode||'average'}"]`);
+  if(r)r.checked=true;
+  onPayModeChange(state.payMode||'average');
+  if(state.payAnchorDate)document.getElementById('pay-anchor-date').value=state.payAnchorDate;
+  renderManualDateTags();
+}
+
+// ============================================================
+// PURCHASES
+// ============================================================
+function renderPurchases() {
+  const el=document.getElementById('p-list');
+  el.innerHTML=state.purchases.length===0?'<p class="empty-state">No purchases yet. Add a card first, then log a purchase.</p>':state.purchases.slice().reverse().map(p=>`<div class="list-row"><div style="display:flex;align-items:center;gap:10px">${getNetTag(p.cardType)}<div><div class="list-row-main">${fmt(p.amt)}</div><div class="list-row-sub">${p.cardName}${p.note?' · '+p.note:''} · ${p.cat}</div></div></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--text3)">${p.date}</span><button class="btn-danger" onclick="removePurchase(${p.id})">×</button></div></div>`).join('');
+}
+function logPurchase() {
+  const amt=parseFloat(document.getElementById('p-amt').value)||0;
+  const cardId=parseInt(document.getElementById('p-card').value)||0;
+  if(!amt||!cardId){alert('Please enter an amount and select a card.');return;}
+  const card=state.cards.find(c=>c.id===cardId);if(!card)return;
+  const dateVal=document.getElementById('p-date').value||new Date().toISOString().split('T')[0];
+  state.purchases.push({amt,cardId,cardName:card.name,cardType:card.type,cat:document.getElementById('p-cat').value,note:document.getElementById('p-note').value.trim(),date:dateVal,id:Date.now()});
+  document.getElementById('p-amt').value='';document.getElementById('p-note').value='';
+  saveState();renderPurchases();renderHome();renderCards();renderCalendar();renderBudgets();
+}
+function removePurchase(id) { state.purchases=state.purchases.filter(p=>p.id!==id); saveState();renderPurchases();renderHome();renderCards();renderCalendar();renderBudgets(); }
+function updateCardDropdown() {
+  document.getElementById('p-card').innerHTML='<option value="">— Select card —</option>'+state.cards.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+}
+
+// ============================================================
+// CARDS
+// ============================================================
+function renderCards() {
+  const el=document.getElementById('c-list');
+  if(!state.cards.length){el.innerHTML='<p class="empty-state">No cards added yet</p>';return;}
+  el.innerHTML='<div class="cards-grid">'+state.cards.map(c=>{
+    const spent=state.purchases.filter(p=>p.cardId===c.id).reduce((s,p)=>s+p.amt,0);
+    const owed=c.balance+spent,pct=c.limit>0?Math.min(100,owed/c.limit*100):0;
+    const fc=pct>70?'red':pct>40?'amber':'green';
+    const today=new Date();let due='';
+    if(c.due){const d=new Date(today.getFullYear(),today.getMonth(),c.due);if(d<today)d.setMonth(d.getMonth()+1);const diff=Math.ceil((d-today)/(1000*60*60*24));due=diff<=7?`<span class="badge" style="color:var(--red)">${diff} days until due</span>`:`<span class="badge">Due in ${diff} days</span>`;}
+    return `<div class="card" style="margin-bottom:0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="display:flex;align-items:center;gap:10px">${getNetTag(c.type)}<span style="font-size:16px;font-weight:700">${c.name}</span></div><button class="btn-danger" onclick="removeCard(${c.id})">×</button></div>${c.limit>0?`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:4px"><span>Spent: <strong style="color:var(--text)">${fmt(owed)}</strong></span><span>Limit: ${fmt(c.limit)}</span></div><div class="prog-bar"><div class="prog-fill ${fc}" style="width:${pct.toFixed(1)}%"></div></div><div class="badge-row"><span class="badge">${pct.toFixed(0)}% utilized</span>${c.apr?`<span class="badge">${c.apr}% APR</span>`:''}${due}</div>`:'<div style="font-size:13px;color:var(--text3)">Debit / no limit set</div>'}</div>`;
+  }).join('')+'</div>';
+}
+function addCard() {
+  const name=document.getElementById('c-name').value.trim();
+  if(!name){alert('Please enter a card name.');return;}
+  state.cards.push({name,type:document.getElementById('c-type').value,limit:parseFloat(document.getElementById('c-limit').value)||0,apr:parseFloat(document.getElementById('c-apr').value)||0,due:parseInt(document.getElementById('c-due').value)||0,balance:parseFloat(document.getElementById('c-bal').value)||0,id:Date.now()});
+  ['c-name','c-limit','c-apr','c-due','c-bal'].forEach(id=>document.getElementById(id).value='');
+  saveState();renderCards();updateCardDropdown();
+}
+function removeCard(id) { state.cards=state.cards.filter(c=>c.id!==id); saveState();renderCards();updateCardDropdown(); }
+
+// ============================================================
+// CALENDAR
+// ============================================================
+function renderCalendar() {
+  const year=state.calYear,month=state.calMonth;
+  const days=new Date(year,month+1,0).getDate(),firstDay=new Date(year,month,1).getDay();
+  const budget=getDailyBudget(year,month),today=new Date();
+  const payDates=getPayDatesInMonth(year,month);
+  const isAvg=state.incomeFreq!=='monthly'&&state.payMode==='average';
+  document.getElementById('cal-label').textContent=new Date(year,month).toLocaleString('default',{month:'long',year:'numeric'});
+  let html='';
+  for(let i=0;i<firstDay;i++)html+='<div class="cal-day empty-day"></div>';
+  let gd=0,rd=0,over=0,under=0;
+  for(let d=1;d<=days;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const spent=getDayPurchases(ds).reduce((s,p)=>s+p.amt,0);
+    const isToday=today.getDate()===d&&today.getMonth()===month&&today.getFullYear()===year;
+    const isPay=!isAvg&&payDates.includes(ds);
+    let cls='none',amt='';
+    if(spent>0){
+      if(budget>0&&spent>budget){cls='red';rd++;over+=spent-budget;}
+      else{cls='green';gd++;if(budget>0)under+=budget-spent;}
+      amt=`<div class="day-amt">${spent>=1000?'$'+(spent/1000).toFixed(1)+'k':'$'+spent.toFixed(0)}</div>`;
+    }
+    html+=`<div class="cal-day ${cls}${isToday?' today':''}${isPay?' payday':''}" title="${ds}: ${fmt(spent)} spent${isPay?' · Payday':''}">${d}${amt}${isPay?'<div class="pay-flag">payday</div>':''}</div>`;
+  }
+  document.getElementById('cal-days').innerHTML=html;
+  const income=getMonthlyIncome(year,month);
+  let payInfo='';
+  if(state.incomeFreq!=='monthly'&&state.income>0){
+    payInfo=isAvg?`<div style="font-size:13px;color:var(--text3);margin-top:8px">Using average paycheck count. Switch to "pattern" or "manual" on Home for exact monthly totals.</div>`:`<div style="font-size:13px;color:var(--green);margin-top:8px">${payDates.length} paycheck${payDates.length===1?'':'s'} this month = ${fmt(income)}</div>`;
+  }
+  document.getElementById('cal-stats').innerHTML=`<div class="card-title">Monthly summary</div><div class="stat-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px"><div class="stat-card"><div class="stat-label">Under budget days</div><div class="stat-val green">${gd}</div></div><div class="stat-card"><div class="stat-label">Over budget days</div><div class="stat-val red">${rd}</div></div></div><div style="font-size:14px;color:var(--text2);margin-bottom:8px">Daily budget: <strong style="color:var(--text)">${fmt(budget)}</strong>${gd+rd>0?' · '+(gd+rd)+' days tracked':''}</div>${over>0?`<div style="font-size:14px;color:var(--red)">Total overage: ${fmt(over)}</div>`:''}${under>0?`<div style="font-size:14px;color:var(--green)">Total saved vs budget: ${fmt(under)}</div>`:''}${payInfo}`;
+}
+function calMove(dir) {
+  state.calMonth+=dir;
+  if(state.calMonth>11){state.calMonth=0;state.calYear++;}
+  if(state.calMonth<0){state.calMonth=11;state.calYear--;}
+  saveState();renderCalendar();
+}
+
+// ============================================================
+// GOALS
+// ============================================================
+function renderGoals() {
+  const el=document.getElementById('g-list'),sel=document.getElementById('g-sel');
+  if(sel)sel.innerHTML=state.goals.length===0?'<option value="">No goals added yet</option>':state.goals.map(g=>`<option value="${g.id}">${g.name}</option>`).join('');
+  if(!state.goals.length){el.innerHTML='<p class="empty-state">No goals yet. Add one to start saving!</p>';return;}
+  el.innerHTML=state.goals.map(g=>{
+    const pct=Math.min(100,g.saved/g.target*100),left=g.target-g.saved;
+    let di='';
+    if(g.date){const dd=Math.ceil((new Date(g.date+'T00:00:00')-new Date())/(1000*60*60*24));di=dd>0?`<span class="badge">${dd} days left</span>`:`<span class="badge" style="color:var(--red)">Past due</span>`;}
+    return `<div class="goal-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span class="goal-name">${g.name}</span><button class="btn-danger" onclick="removeGoal(${g.id})">×</button></div><div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:4px"><span>${fmt(g.saved)} saved</span><span>${fmt(g.target)} goal</span></div><div class="prog-bar"><div class="prog-fill green" style="width:${pct.toFixed(1)}%"></div></div><div class="badge-row"><span class="badge">${pct.toFixed(0)}% complete</span><span class="badge">${fmt(left)} to go</span>${di}</div></div>`;
+  }).join('');
+}
+function addGoal() {
+  const name=document.getElementById('g-name').value.trim(),target=parseFloat(document.getElementById('g-target').value)||0;
+  if(!name||!target){alert('Please enter a goal name and target amount.');return;}
+  state.goals.push({name,target,saved:parseFloat(document.getElementById('g-saved').value)||0,date:document.getElementById('g-date').value||'',id:Date.now()});
+  ['g-name','g-target','g-saved','g-date'].forEach(id=>document.getElementById(id).value='');
+  saveState();renderGoals();
+}
+function removeGoal(id) { state.goals=state.goals.filter(g=>g.id!==id); saveState();renderGoals(); }
+function addToGoal() {
+  const id=parseInt(document.getElementById('g-sel').value),amt=parseFloat(document.getElementById('g-add-amt').value)||0;
+  if(!id||!amt)return;
+  const g=state.goals.find(x=>x.id===id);
+  if(g){g.saved=Math.min(g.target,g.saved+amt);document.getElementById('g-add-amt').value='';saveState();renderGoals();}
+}
+
+// ============================================================
+// CALCULATOR
+// ============================================================
+function runCalc() {
+  const limit=parseFloat(document.getElementById('cc-limit').value)||0;
+  const charged=parseFloat(document.getElementById('cc-charged').value)||0;
+  const apr=parseFloat(document.getElementById('cc-apr').value)||0;
+  const dueStr=document.getElementById('cc-due').value;
+  const pay=parseFloat(document.getElementById('cc-pay').value)||0;
+  const out=document.getElementById('calc-out');
+  if(!charged||!apr){out.style.display='none';return;}
+  out.style.display='block';
+  if(limit>0){
+    document.getElementById('r-available').textContent=fmt(Math.max(0,limit-charged));
+    const u=Math.min(100,charged/limit*100);
+    const uel=document.getElementById('r-util');
+    uel.textContent=u.toFixed(1)+'%';
+    uel.className='r-val '+(u>70?'danger':u>30?'':'good');
+  } else {
+    document.getElementById('r-available').textContent='—';
+    document.getElementById('r-util').textContent='—';
+  }
+  const daily=charged*(apr/100/365);
+  document.getElementById('r-daily').textContent=fmt(daily)+'/day';
+  if(dueStr){
+    const due=new Date(dueStr+'T00:00:00'),t=new Date();t.setHours(0,0,0,0);
+    const d=Math.max(0,Math.ceil((due-t)/(1000*60*60*24)));
+    document.getElementById('r-due').textContent=fmt(daily*d)+` (${d} day${d===1?'':'s'})`;
+  } else document.getElementById('r-due').textContent='—';
+  const ps=document.getElementById('calc-payoff-section');
+  if(pay>0){
+    ps.style.display='block';
+    const mr=apr/100/12;
+    if(pay<=charged*mr){
+      document.getElementById('r-months').textContent='∞';
+      document.getElementById('r-interest').textContent='∞';
+      document.getElementById('r-tip').textContent='⚠ This payment is less than monthly interest. Increase it to reduce the balance.';
+      document.getElementById('calc-chart').innerHTML='';
+    } else {
+      const months=Math.ceil(-Math.log(1-(charged*mr)/pay)/Math.log(1+mr));
+      let ti=0,rem=charged;
+      for(let i=0;i<months;i++){ti+=rem*mr;rem=rem*(1+mr)-pay;}
+      document.getElementById('r-months').textContent=months+' month'+(months===1?'':'s');
+      document.getElementById('r-interest').textContent=fmt(ti);
+      document.getElementById('r-tip').textContent=`Paying ${fmt(pay)}/month, you'd be debt-free in ${months} month${months===1?'':'s'} and pay ${fmt(ti)} in total interest.`;
+      let ch='<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)"><div style="font-size:12px;color:var(--text3);margin-bottom:8px">Payoff milestones</div>';
+      const ms=[Math.floor(months*.25),Math.floor(months*.5),Math.floor(months*.75),months].filter((m,i,a)=>m>0||i===a.length-1);
+      let r=charged,prev=0;
+      ms.forEach(m=>{for(let mo=prev;mo<m;mo++)r=r*(1+mr)-pay;const p=Math.max(0,r/charged*100);ch+=`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:3px"><span>Month ${m}</span><span>${fmt(Math.max(0,r))} remaining</span></div><div class="prog-bar"><div class="prog-fill orange" style="width:${(100-p).toFixed(0)}%"></div></div></div>`;prev=m;});
+      ch+='</div>';
+      document.getElementById('calc-chart').innerHTML=ch;
+    }
+  } else {
+    ps.style.display='none';
+    document.getElementById('r-tip').textContent='Tip: enter a planned monthly payment to see how long it would take to pay this off.';
+    document.getElementById('calc-chart').innerHTML='';
+  }
+}
+
+// ============================================================
+// BUDGET TRACKER
+// Set a spending target per category. Preset categories auto-track
+// from logged purchases; custom categories are updated manually.
+// Monthly commitments are auto-included in the "utilities"/matching
+// preset budgets are not — instead commitments count toward budgets
+// only when their category matches (handled below via includeCommit).
+// ============================================================
+
+// Show/hide the custom-name field when "Custom" is chosen
+function onBudgetCatChange() {
+  const isCustom = document.getElementById('bud-cat').value === '__custom';
+  document.getElementById('bud-custom-wrap').style.display = isCustom ? 'block' : 'none';
+}
+
+function addBudget() {
+  const catVal = document.getElementById('bud-cat').value;
+  const amt = parseFloat(document.getElementById('bud-amt').value) || 0;
+  const period = document.getElementById('bud-period').value;
+  if (!amt) { alert('Please enter a budget amount.'); return; }
+
+  let cat, label, custom;
+  if (catVal === '__custom') {
+    const name = document.getElementById('bud-custom-name').value.trim();
+    if (!name) { alert('Please name your custom category.'); return; }
+    cat = 'custom_' + Date.now();
+    label = name;
+    custom = true;
+  } else {
+    // Prevent duplicate preset budgets
+    if (state.budgets.some(b => b.cat === catVal)) { alert('You already have a budget for that category.'); return; }
+    cat = catVal;
+    label = CAT_LABELS[catVal] || catVal;
+    custom = false;
+  }
+
+  state.budgets.push({ id: Date.now(), cat, label, amount: amt, period, custom, manualSpent: 0 });
+  document.getElementById('bud-amt').value = '';
+  document.getElementById('bud-custom-name').value = '';
+  document.getElementById('bud-cat').value = 'food';
+  onBudgetCatChange();
+  saveState();
+  renderBudgets();
+}
+
+function removeBudget(id) {
+  state.budgets = state.budgets.filter(b => b.id !== id);
+  saveState();
+  renderBudgets();
+}
+
+// For custom budgets, let the user add spending manually
+function addBudgetSpend() {
+  const id = parseInt(document.getElementById('bud-manual-sel').value);
+  const amt = parseFloat(document.getElementById('bud-manual-amt').value) || 0;
+  if (!id || !amt) return;
+  const b = state.budgets.find(x => x.id === id);
+  if (b) { b.manualSpent = (b.manualSpent || 0) + amt; document.getElementById('bud-manual-amt').value = ''; saveState(); renderBudgets(); }
+}
+
+// How much has been spent against a budget in its current period.
+// Preset categories: sum of logged purchases in that category for this
+// week/month, PLUS any monthly commitments whose name matches the category.
+// Custom categories: the manualSpent running total.
+function getBudgetSpent(b) {
+  if (b.custom) return b.manualSpent || 0;
+
+  const now = new Date();
+  let start;
+  if (b.period === 'weekly') {
+    // Start of the current week (Sunday)
+    start = new Date(now); start.setDate(now.getDate() - now.getDay()); start.setHours(0,0,0,0);
+  } else {
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+  }
+
+  // The "commitments" budget tracks your fixed monthly bills (rent,
+  // subscriptions, etc.) automatically from what you entered on Home.
+  if (b.cat === 'commitments') {
+    const commitTotal = state.expenses.reduce((s, e) => s + e.amt, 0);
+    return b.period === 'weekly' ? commitTotal / 4.33 : commitTotal;
+  }
+
+  // All other preset categories: sum logged purchases in that category
+  // within the current period.
+  return state.purchases
+    .filter(p => p.cat === b.cat && new Date(p.date + 'T00:00:00') >= start)
+    .reduce((s, p) => s + p.amt, 0);
+}
+
+function renderBudgets() {
+  const list = document.getElementById('budget-list');
+  const manualCard = document.getElementById('bud-manual-card');
+  const manualSel = document.getElementById('bud-manual-sel');
+
+  // Populate the custom-budget dropdown (for manual spending)
+  const customBudgets = state.budgets.filter(b => b.custom);
+  if (customBudgets.length > 0) {
+    manualCard.style.display = 'block';
+    manualSel.innerHTML = customBudgets.map(b => `<option value="${b.id}">${b.label}</option>`).join('');
+  } else {
+    manualCard.style.display = 'none';
+  }
+
+  // Summary stats across all budgets
+  let totalBudget = 0, totalSpent = 0, overCount = 0;
+  state.budgets.forEach(b => {
+    totalBudget += b.amount;
+    const s = getBudgetSpent(b);
+    totalSpent += s;
+    if (s > b.amount) overCount++;
+  });
+  const statsEl = document.getElementById('budget-stats');
+  if (state.budgets.length > 0) {
+    statsEl.style.display = 'grid';
+    const leftColor = totalSpent > totalBudget ? 'red' : 'green';
+    statsEl.innerHTML = `
+      <div class="stat-card"><div class="stat-label">Total budgeted</div><div class="stat-val">${fmt(totalBudget)}</div></div>
+      <div class="stat-card"><div class="stat-label">Total spent</div><div class="stat-val ${totalSpent>totalBudget?'red':''}">${fmt(totalSpent)}</div></div>
+      <div class="stat-card"><div class="stat-label">Left to spend</div><div class="stat-val ${leftColor}">${fmt(totalBudget-totalSpent)}</div></div>`;
+  } else {
+    statsEl.style.display = 'none';
+  }
+
+  if (state.budgets.length === 0) {
+    list.innerHTML = '<p class="empty-state">No budgets yet. Add one to start tracking!</p>';
+    return;
+  }
+
+  list.innerHTML = state.budgets.map(b => {
+    const spent = getBudgetSpent(b);
+    const pct = b.amount > 0 ? (spent / b.amount * 100) : 0;
+    const pctClamped = Math.min(100, pct);
+    // Color: green under 80%, yellow 80-100%, red over 100%
+    const fillColor = pct > 100 ? 'red' : pct >= 80 ? 'amber' : 'green';
+    const left = b.amount - spent;
+    const color = CAT_COLORS[b.cat] || '#ffd23f';
+    const periodLabel = b.period === 'weekly' ? 'this week' : 'this month';
+    return `
+      <div class="card" style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="width:12px;height:12px;border-radius:3px;background:${color};flex-shrink:0"></span>
+            <span style="font-size:16px;font-weight:700">${b.label}</span>
+            ${b.custom ? '<span class="badge">custom</span>' : '<span class="badge">auto</span>'}
+          </div>
+          <button class="btn-danger" onclick="removeBudget(${b.id})">×</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:4px">
+          <span>${fmt(spent)} spent ${periodLabel}</span>
+          <span>${fmt(b.amount)} ${b.period === 'weekly' ? '/wk' : '/mo'}</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill ${fillColor}" style="width:${pctClamped.toFixed(1)}%"></div></div>
+        <div class="badge-row">
+          <span class="badge" style="${pct>100?'color:var(--red)':''}">${pct.toFixed(0)}% used</span>
+          <span class="badge" style="${left<0?'color:var(--red)':'color:var(--green)'}">${left >= 0 ? fmt(left) + ' left' : fmt(-left) + ' over'}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// YEAR REVIEW
+// ============================================================
+function renderYearReview() {
+  const year=parseInt(document.getElementById('review-year').value)||new Date().getFullYear();
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let tg=0,tr=0,ts=0,html='';
+  const cats={};
+  months.forEach((mn,mi)=>{
+    const days=new Date(year,mi+1,0).getDate(),daily=getDailyBudget(year,mi);
+    let gd=0,rd=0;
+    const dots=Array.from({length:days},(_,i)=>{
+      const d=i+1,ds=`${year}-${String(mi+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const dp=getDayPurchases(ds),spent=dp.reduce((s,p)=>s+p.amt,0);
+      dp.forEach(p=>{cats[p.cat]=(cats[p.cat]||0)+p.amt;});
+      ts+=spent;
+      if(!spent)return '<div class="yr-dot none"></div>';
+      if(daily>0&&spent>daily){rd++;tr++;return `<div class="yr-dot red" title="${ds}: ${fmt(spent)}"></div>`;}
+      gd++;tg++;return `<div class="yr-dot green" title="${ds}: ${fmt(spent)}"></div>`;
+    }).join('');
+    const sc=gd+rd>0?Math.round(gd/(gd+rd)*100):null;
+    html+=`<div class="yr-month-block"><div class="yr-month-label"><span>${mn}</span><span style="font-size:12px;color:var(--text3)">${gd>0?`<span style="color:var(--green)">${gd} ✓</span> `:''}${rd>0?`<span style="color:var(--red)">${rd} ✗</span>`:''}${sc!==null?' · '+sc+'%':''}</span></div><div class="yr-dots">${dots}</div></div>`;
+  });
+  const sc=tg+tr>0?Math.round(tg/(tg+tr)*100):0;
+  document.getElementById('yr-stats').innerHTML=`<div class="stat-card"><div class="stat-label">Green days</div><div class="stat-val green">${tg}</div></div><div class="stat-card"><div class="stat-label">Red days</div><div class="stat-val red">${tr}</div></div><div class="stat-card"><div class="stat-label">Total spent</div><div class="stat-val">${fmt(ts)}</div></div><div class="stat-card"><div class="stat-label">Budget score</div><div class="stat-val orange">${sc}%</div></div>`;
+  document.getElementById('yr-heatmap').innerHTML=html;
+  const cl={food:'Food & dining',gas:'Transport',shopping:'Shopping',entertainment:'Entertainment',health:'Health',utilities:'Utilities',travel:'Travel',other:'Other'};
+  const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const mx=sorted.length?sorted[0][1]:1;
+  document.getElementById('yr-categories').innerHTML=sorted.length===0?'<p class="empty-state">No spending data yet</p>':sorted.map(([c,a])=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:4px"><span>${cl[c]||c}</span><span style="color:var(--text)">${fmt(a)}</span></div><div class="prog-bar"><div class="prog-fill blue" style="width:${(a/mx*100).toFixed(1)}%"></div></div></div>`).join('');
+}
+function populateYearDropdown() {
+  const y=new Date().getFullYear();
+  document.getElementById('review-year').innerHTML=[y,y-1,y-2].map(yr=>`<option value="${yr}" ${yr===y?'selected':''}>${yr}</option>`).join('');
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function renderAll() { renderHome();renderPie();renderPurchases();renderCards();renderGoals();renderBudgets();renderCalendar();updateCardDropdown(); }
+document.addEventListener('DOMContentLoaded',()=>{
+  loadState();
+  document.getElementById('p-date').value=new Date().toISOString().split('T')[0];
+  populateYearDropdown();
+  setupNav();
+  restoreIncomeForm();
+  renderAll();
+});
+</script>
+</body>
+</html>
